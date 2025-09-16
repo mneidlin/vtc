@@ -29,8 +29,18 @@ t<-df$time #in ms
 t<-t-min(t)
 v<-df$volume #in ml
 timeRR<-df$timeRR[1]
+#Adjust to your file names  
 patient<-substring(filename,6,nchar(filename)-4)
 
+#If time > timeRR remove everything below (means more than one cycle has been recorded)
+#Get the entry which is closest to timeRR 
+if (max(t)>timeRR){
+difft<-timeRR-t  
+idx.cut<-length(which(difft > 0))
+
+t<-t[1:idx.cut]
+v<-v[1:idx.cut]
+}
 
 #Add the timeRR and first value of v to the array
 t<-c(t,timeRR)
@@ -199,3 +209,4 @@ b<-ggplot() +
 
 arrange<-ggarrange(a, b, labels=c("A","B"),ncol = 2, nrow = 1,common.legend = TRUE, legend="right")
 ggsave("VTC_DV_Norm.tiff",arrange,width=16,height=7,dpi=300,compression="lzw",bg="white")
+
